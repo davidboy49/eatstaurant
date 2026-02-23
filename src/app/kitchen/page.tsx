@@ -10,6 +10,7 @@ export default function KDSPage() {
     const [orders, setOrders] = useState<any[]>([]);
 
     useEffect(() => {
+        if (!db) return;
         // Only fetch active orders for the kitchen
         const q = query(
             collection(db, "orders"),
@@ -30,6 +31,7 @@ export default function KDSPage() {
         else if (currentStatus === "Preparing") nextStatus = "Ready";
         else if (currentStatus === "Ready") nextStatus = "Served";
 
+        if (!db) return;
         await updateDoc(doc(db, "orders", orderId), {
             status: nextStatus,
             updatedAt: new Date().toISOString()

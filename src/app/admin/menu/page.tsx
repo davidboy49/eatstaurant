@@ -27,6 +27,7 @@ export default function MenuManagement() {
     const [editingItem, setEditingItem] = useState<any>(null);
 
     useEffect(() => {
+        if (!db) return;
         // Fetch Categories
         const qCat = query(collection(db, "categories"), orderBy("sortOrder", "asc"));
         const unsubCat = onSnapshot(qCat, (snapshot) => {
@@ -47,12 +48,14 @@ export default function MenuManagement() {
 
     const handleDeleteCategory = async (id: string) => {
         if (confirm("Are you sure you want to delete this category?")) {
+            if (!db) return alert("Missing database connection.");
             await deleteDoc(doc(db, "categories", id));
         }
     };
 
     const handleDeleteItem = async (id: string) => {
         if (confirm("Are you sure you want to delete this menu item?")) {
+            if (!db) return alert("Missing database connection.");
             await deleteDoc(doc(db, "menuItems", id));
         }
     };
@@ -268,6 +271,7 @@ function CategoryModal({ onClose, category }: { onClose: () => void, category: a
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         const data = { name, sortOrder: Number(sortOrder), isActive };
+        if (!db) return alert("Missing database connection.");
         if (category?.id) {
             await updateDoc(doc(db, "categories", category.id), data);
         } else {
@@ -317,6 +321,7 @@ function ItemModal({ onClose, item, categories }: { onClose: () => void, item: a
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         const data = { name, description, price: Number(price), categoryId, isActive };
+        if (!db) return alert("Missing database connection.");
         if (item?.id) {
             await updateDoc(doc(db, "menuItems", item.id), data);
         } else {
