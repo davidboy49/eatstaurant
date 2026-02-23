@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
-import { useTheme } from "@/components/ThemeProvider";
 import {
     BarChart3,
     LayoutDashboard,
@@ -10,14 +9,11 @@ import {
     Clock,
     Users,
     LogOut,
-    Sun,
-    Moon
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
     const { user, role, logout } = useAuth();
-    const { theme, toggleTheme } = useTheme();
     const pathname = usePathname();
 
     if (!user) return null;
@@ -26,7 +22,10 @@ export default function Sidebar() {
         <aside className="glass-panel" style={{ width: "260px", margin: "var(--spacing-4)", padding: "var(--spacing-4)", display: "flex", flexDirection: "column" }}>
             <div className="flex items-center gap-2" style={{ marginBottom: "var(--spacing-8)", padding: "var(--spacing-2)" }}>
                 <UtensilsCrossed size={24} className="text-primary-color" />
-                <h2 className="text-xl font-bold">Eatstaurant</h2>
+                <div>
+                    <h2 className="text-xl font-bold" style={{ lineHeight: 1.1 }}>Eatstaurant</h2>
+                    <p className="text-sm text-secondary" style={{ fontSize: "0.75rem" }}>Operations Portal</p>
+                </div>
             </div>
 
             <nav className="flex flex-col gap-2">
@@ -46,22 +45,7 @@ export default function Sidebar() {
             </nav>
 
             <div style={{ marginTop: "auto", padding: "var(--spacing-2)" }}>
-                <button
-                    onClick={toggleTheme}
-                    className="flex items-center gap-2 text-sm text-secondary font-medium w-full"
-                    style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: "var(--spacing-2)",
-                        textAlign: "left",
-                        marginBottom: "var(--spacing-4)"
-                    }}
-                >
-                    {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-                    {theme === 'dark' ? "Light Mode" : "Dark Mode"}
-                </button>
-                <div className="flex items-center gap-3" style={{ marginBottom: "var(--spacing-4)" }}>
+                <div className="flex items-center gap-3" style={{ marginBottom: "var(--spacing-4)", padding: "var(--spacing-3)", borderRadius: "var(--radius-md)", background: "var(--color-overlay)" }}>
                     <div style={{
                         width: "36px",
                         height: "36px",
@@ -71,7 +55,7 @@ export default function Sidebar() {
                         alignItems: "center",
                         justifyContent: "center",
                         fontWeight: "bold",
-                        color: "var(--color-text-primary)"
+                        color: "white"
                     }}>
                         {user.email?.[0].toUpperCase()}
                     </div>
@@ -82,12 +66,14 @@ export default function Sidebar() {
                 </div>
                 <button
                     onClick={() => logout()}
-                    className="flex items-center gap-2 text-sm text-secondary font-medium w-full"
+                    className="flex items-center gap-2 text-sm font-medium w-full"
                     style={{
-                        background: "none",
-                        border: "none",
+                        background: "var(--color-background-surface)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-md)",
                         cursor: "pointer",
-                        padding: "var(--spacing-2)",
+                        padding: "var(--spacing-3)",
+                        color: "var(--color-text-secondary)",
                         textAlign: "left"
                     }}
                 >
