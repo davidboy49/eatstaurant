@@ -1,34 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eatstaurant
 
-## Getting Started
+This is a Next.js application for restaurant operations with Firebase Authentication and Firestore.
 
-First, run the development server:
+## Local development
+
+1. Install dependencies.
+
+```bash
+npm install
+```
+
+2. Create `.env.local` using the Firebase web app credentials:
+
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+NEXT_PUBLIC_FIREBASE_APP_ID=...
+```
+
+3. Start the development server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where should env vars be set?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Short answer: **both**, but in different places for different environments.
 
-## Learn More
+- **Local development**: put them in `.env.local` (from `.env.example`).
+- **Vercel deployment**: add the same keys in **Vercel Project Settings → Environment Variables**.
 
-To learn more about Next.js, take a look at the following resources:
+`NEXT_PUBLIC_*` variables are embedded at build time, so after editing them in Vercel you must **redeploy** for changes to take effect.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploying to Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you see this browser error:
 
-## Deploy on Vercel
+```text
+FirebaseError: Firebase: Error (auth/invalid-api-key)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+it means your Firebase client environment variables are missing or incorrect in Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+In **Vercel → Project → Settings → Environment Variables**, set these exact keys for your target environments (Production/Preview/Development):
+
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
+
+After updating variables, redeploy the project.
+
+### Still seeing `auth/invalid-api-key` after setting env vars?
+
+Check these common causes:
+
+1. **Wrong Vercel environment scope**: ensure the keys are added to the environment you are deploying (`Production`, `Preview`, or `Development`).
+2. **No redeploy after env change**: trigger a new deployment after editing variables.
+3. **Quoted values**: do not include surrounding quotes in Vercel values (`AIza...`, not `"AIza..."`).
+4. **Placeholder values**: do not use `...`; copy the real values from Firebase Console → Project Settings → Your apps → Web app config.
+5. **Mismatched Firebase project**: make sure all six values come from the same Firebase project/app.
+
+### Runtime debug page
+
+A temporary debug page is available at `/debug-env` to verify what the deployed runtime is actually receiving for Firebase env vars.
+
+It shows, per key:
+- whether the value is set
+- trimmed length
+- whether there is whitespace padding
+- whether the value is wrapped in quotes
+- a masked preview
+
+Use it to compare Production vs Preview deployments and confirm Vercel env propagation.
+
