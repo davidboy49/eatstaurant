@@ -28,8 +28,8 @@ if (!hasAllFirebaseEnv) {
 }
 
 // Firebase client SDK is browser-only. During Next.js SSR/static generation
-// (e.g. the /_not-found page rendering root layout), return null stubs.
-// All pages that call Firebase are "use client" so stubs are never invoked.
+// (e.g. /_not-found rendering the root layout), we return null stubs.
+// All pages that actually call Firebase are "use client" so stubs are never invoked.
 const isBrowser = typeof window !== "undefined";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
