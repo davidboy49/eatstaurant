@@ -56,3 +56,27 @@ In **Vercel → Project → Settings → Environment Variables**, set these exac
 - `NEXT_PUBLIC_FIREBASE_APP_ID`
 
 After updating variables, redeploy the project.
+
+### Still seeing `auth/invalid-api-key` after setting env vars?
+
+Check these common causes:
+
+1. **Wrong Vercel environment scope**: ensure the keys are added to the environment you are deploying (`Production`, `Preview`, or `Development`).
+2. **No redeploy after env change**: trigger a new deployment after editing variables.
+3. **Quoted values**: do not include surrounding quotes in Vercel values (`AIza...`, not `"AIza..."`).
+4. **Placeholder values**: do not use `...`; copy the real values from Firebase Console → Project Settings → Your apps → Web app config.
+5. **Mismatched Firebase project**: make sure all six values come from the same Firebase project/app.
+
+### Runtime debug page
+
+A temporary debug page is available at `/debug-env` to verify what the deployed runtime is actually receiving for Firebase env vars.
+
+It shows, per key:
+- whether the value is set
+- trimmed length
+- whether there is whitespace padding
+- whether the value is wrapped in quotes
+- a masked preview
+
+Use it to compare Production vs Preview deployments and confirm Vercel env propagation.
+
