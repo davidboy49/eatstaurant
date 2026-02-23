@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/request';
+import type { NextRequest } from 'next/server';
 
 // This middleware is a simplified version.
 // Real-world Firebase middleware usually involves reading session cookies.
