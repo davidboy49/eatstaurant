@@ -2,40 +2,42 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-const requiredFirebaseEnvKeys = [
-    "NEXT_PUBLIC_FIREBASE_API_KEY",
-    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
-    "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
-    "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
-    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
-    "NEXT_PUBLIC_FIREBASE_APP_ID",
-] as const;
+// IMPORTANT: In Next.js, NEXT_PUBLIC_ env vars MUST be accessed via literal
+// property names — NOT dynamic bracket access like process.env[key], which
+// always returns undefined because Next.js statically inlines these at build time.
+const firebaseConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
 
-const missingFirebaseEnvKeys = requiredFirebaseEnvKeys.filter((key) => !process.env[key]);
-let hasAllFirebaseEnv = missingFirebaseEnvKeys.length === 0;
+const hasAllFirebaseEnv = !!(
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId
+);
 
 if (!hasAllFirebaseEnv) {
-    // Log an error but do not throw so the client doesn't crash in production.
-    // Recommend adding the vars to Vercel project settings for production.
     console.error(
-        `Missing Firebase client env vars: ${missingFirebaseEnvKeys.join(", ")}. ` +
-            "Add them to your local .env.local and to your Vercel project settings.",
+        "Missing Firebase configuration. Ensure all NEXT_PUBLIC_FIREBASE_* keys " +
+        "are in .env.local (local dev) and Vercel project settings (production)."
     );
 }
 
-const firebaseConfig = hasAllFirebaseEnv
-    ? {
-          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-      }
-    : null;
+// Firebase client SDK is browser-only. During Next.js SSR/static generation
+// (e.g. the /_not-found page rendering root layout), return null stubs.
+// All pages that call Firebase are "use client" so stubs are never invoked.
+const isBrowser = typeof window !== "undefined";
 
-const app = hasAllFirebaseEnv ? (!getApps().length ? initializeApp(firebaseConfig as any) : getApp()) : null;
-const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const app = (isBrowser && hasAllFirebaseEnv)
+    ? (!getApps().length ? initializeApp(firebaseConfig) : getApp())
+    : null;
+const auth = app ? getAuth(app) : null as any;
+const db = app ? getFirestore(app) : null as any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export { app, auth, db, firebaseConfig, hasAllFirebaseEnv };
