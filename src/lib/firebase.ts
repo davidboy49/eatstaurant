@@ -11,14 +11,16 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-if (!firebaseConfig.apiKey) {
-    throw new Error(
-        "Missing Firebase configuration. Please ensure all NEXT_PUBLIC_FIREBASE_* environment variables are set."
-    );
-}
+// Firebase client SDK is browser-only. During Next.js server-side rendering
+// or static page generation, we return safe stubs. All code that actually
+// calls Firebase lives in "use client" components, so stubs are never invoked.
+const isBrowser = typeof window !== "undefined";
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const app = isBrowser ? (!getApps().length ? initializeApp(firebaseConfig) : getApp()) : ({} as any);
+const auth = isBrowser ? getAuth(app) : ({} as any);
+const db = isBrowser ? getFirestore(app) : ({} as any);
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export { app, auth, db };
+
