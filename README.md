@@ -80,3 +80,5 @@ It shows, per key:
 
 Use it to compare Production vs Preview deployments and confirm Vercel env propagation.
 
+If `/debug-env` was blank before, this is now fixed by making auth initialization lazy so the diagnostics page can still render even when Firebase env config is broken.
+

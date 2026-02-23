@@ -2,24 +2,24 @@
 
 :root {
   /* Colors - Modern Light Theme (Default if not specified) */
-  --color-primary: hsl(210, 100%, 50%);
-  --color-primary-hover: hsl(210, 100%, 45%);
-  --color-background-base: hsl(0, 0%, 98%);
+  --color-primary: hsl(16, 88%, 52%);
+  --color-primary-hover: hsl(16, 88%, 46%);
+  --color-background-base: hsl(30, 40%, 98%);
   --color-background-surface: hsl(0, 0%, 100%);
-  --color-background-elevated: hsl(0, 0%, 96%);
+  --color-background-elevated: hsl(30, 25%, 95%);
 
-  --color-text-primary: hsl(220, 20%, 10%);
-  --color-text-secondary: hsl(220, 10%, 40%);
+  --color-text-primary: hsl(20, 16%, 14%);
+  --color-text-secondary: hsl(20, 10%, 38%);
   --color-text-disabled: hsl(220, 10%, 60%);
 
   --color-danger: hsl(0, 80%, 50%);
   --color-success: hsl(150, 80%, 35%);
   --color-warning: hsl(40, 90%, 45%);
 
-  --color-overlay: rgba(0, 0, 0, 0.05);
-  --color-overlay-hover: rgba(0, 0, 0, 0.1);
-  --color-border: rgba(0, 0, 0, 0.1);
-  --color-icon-bg: rgba(0, 0, 0, 0.05);
+  --color-overlay: rgba(249, 115, 22, 0.08);
+  --color-overlay-hover: rgba(249, 115, 22, 0.14);
+  --color-border: rgba(180, 83, 9, 0.18);
+  --color-icon-bg: rgba(249, 115, 22, 0.1);
 
   /* Typography */
   --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
@@ -44,37 +44,10 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: 1px solid rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: 1px solid rgba(180, 83, 9, 0.16);
 }
 
-.dark {
-  /* Colors - Modern Dark Theme */
-  --color-primary: hsl(210, 100%, 50%);
-  --color-primary-hover: hsl(210, 100%, 45%);
-  --color-background-base: hsl(220, 20%, 8%);
-  --color-background-surface: hsl(220, 20%, 12%);
-  --color-background-elevated: hsl(220, 20%, 16%);
-
-  --color-text-primary: hsl(0, 0%, 95%);
-  --color-text-secondary: hsl(0, 0%, 70%);
-  --color-text-disabled: hsl(0, 0%, 40%);
-
-  --color-danger: hsl(0, 80%, 60%);
-  --color-success: hsl(150, 80%, 40%);
-  --color-warning: hsl(40, 90%, 50%);
-
-  --color-overlay: rgba(255, 255, 255, 0.05);
-  --color-overlay-hover: rgba(255, 255, 255, 0.1);
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-icon-bg: rgba(255, 255, 255, 0.1);
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-  --glass-bg: rgba(30, 35, 45, 0.7);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 * {
   box-sizing: border-box;
@@ -83,11 +56,14 @@
 }
 
 body {
-  background-color: var(--color-background-base);
+  background: radial-gradient(circle at top right, rgba(251, 146, 60, 0.14), transparent 32%),
+    radial-gradient(circle at 10% 10%, rgba(254, 215, 170, 0.35), transparent 28%),
+    var(--color-background-base);
   color: var(--color-text-primary);
   font-family: var(--font-ui);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 a {
