@@ -76,6 +76,7 @@ export default function POSPage() {
 
     // Load Data
     useEffect(() => {
+        if (!db) return;
         const unsubCats = onSnapshot(query(collection(db, "categories"), orderBy("sortOrder")), snap => {
             const cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             setCategories(cats);
@@ -112,6 +113,7 @@ export default function POSPage() {
         if (orderState.items.length === 0) return alert("Cart is empty");
 
         try {
+            if (!db) return alert("Missing database connection.");
             await addDoc(collection(db, "orders"), {
                 tableNumber: orderState.tableNumber || "Walk-in",
                 items: orderState.items,
