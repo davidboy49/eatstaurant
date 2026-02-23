@@ -26,6 +26,7 @@ export default function SchedulesManagement() {
     const [editingSchedule, setEditingSchedule] = useState<MenuSchedule | null>(null);
 
     useEffect(() => {
+        if (!db) return;
         const qSchedules = query(collection(db, "menuSchedules"));
         const unsubSchedules = onSnapshot(qSchedules, (snapshot) => {
             setSchedules(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as MenuSchedule)));
@@ -44,6 +45,7 @@ export default function SchedulesManagement() {
 
     const handleDelete = async (id: string) => {
         if (confirm("Are you sure you want to delete this schedule?")) {
+            if (!db) return alert("Missing database connection.");
             await deleteDoc(doc(db, "menuSchedules", id));
         }
     };
@@ -186,6 +188,7 @@ function ScheduleModal({ onClose, schedule, menuItems }: { onClose: () => void, 
             isActive
         };
 
+        if (!db) return alert("Missing database connection.");
         if (schedule?.id) {
             await updateDoc(doc(db, "menuSchedules", schedule.id), data);
         } else {

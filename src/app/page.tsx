@@ -21,11 +21,12 @@ export default function Home() {
 
   useEffect(() => {
     if (!user) return;
+    if (!db) return;
     const unsub = onSnapshot(query(collection(db, "orders")), (snap) => {
       setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     });
     return () => unsub();
-  }, [user]);
+  }, [user, db]);
 
   if (loading || !user) {
     return (

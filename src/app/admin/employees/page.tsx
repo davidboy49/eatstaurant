@@ -11,6 +11,7 @@ export default function EmployeesManagement() {
     const [editingEmployee, setEditingEmployee] = useState<any>(null);
 
     useEffect(() => {
+        if (!db) return;
         const unsub = onSnapshot(collection(db, "employees"), (snapshot) => {
             setEmployees(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
         });
@@ -135,6 +136,10 @@ function EmployeeModal({ onClose, employee }: { onClose: () => void, employee: a
         // In a real app with Firebase Admin SDK, we would create the Auth user and get the real UID here.
         const docId = employee?.id || uid || email.replace(/[^a-zA-Z0-9]/g, "");
 
+        if (!db) {
+            alert("Missing database connection. Check Firebase env vars.");
+            return;
+        }
         await setDoc(doc(db, "employees", docId), data, { merge: true });
         onClose();
     };
