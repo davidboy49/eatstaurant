@@ -2,10 +2,70 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // For development, we allow read/write access to all documents.
-      // In production, you would restrict this based on auth and roles.
-      allow read, write: if true;
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
     }
+    function getUserData() {
+      return get(/databases/$(database)/documents/employees/$(request.auth.uid)).data;
+    }
+    function hasRole(roleName) {
+      return isAuthenticated() && getUserData().role == roleName && getUserData().isActive == true;
+    }
+    function isStaff() {
+      return isAuthenticated() && getUserData().isActive == true && 
+        (getUserData().role == 'admin' || getUserData().role == 'manager' || getUserData().role == 'cashier' || getUserData().role == 'kitchen');
+    }
+
+    // 1. Employee Profiles:
+    // Only admins can read/write all employees.
+    // Individual employees can ONLY read their own profile (to get their role).
+    match /employees/{userId} {
+      allow read: if hasRole('admin') || (isAuthenticated() && request.auth.uid == userId);
+      allow write: if hasRole('admin');
+    }
+
+    // 2. Menu (Categories, Items, Schedules):
+    // All staff can read the menu so the POS works.
+    // Only admins and managers can create/edit menu items and schedules.
+    match /categories/{document=**} {
+      allow read: if isStaff();
+      allow write: if hasRole('admin') || hasRole('manager');
+    }
+    match /menuItems/{document=**} {
+      allow read: if isStaff();
+      allow write: if hasRole('admin') || hasRole('manager');
+    }
+    match /menuSchedules/{document=**} {
+      allow read: if isStaff();
+      allow write: if hasRole('admin') || hasRole('manager');
+    }
+
+    // 3. Orders:
+    // Any active staff member can read, write, and update orders (POS needs to create, Kitchen needs to update status).
+    match /orders/{document=**} {
+      // In a hyper-strict environment, we might restrict Cashiers to only write new orders,
+      // but for this MVP, all staff collaborate on the order pipeline.
+      allow read, write: if isStaff();
+    }
+
+    // 4. Settings:
+    // Everyone needs to read settings (for Tax rates, Receipt headers).
+    // Only Admins can modify settings.
+    match /settings/{document=**} {
+      allow read: if isStaff();
+      allow write: if hasRole('admin');
+    }
+    
+    // 5. Tables / Inventory (Reserved for future features)
+    match /tables/{document=**} {
+      allow read, write: if isStaff();
+    }
+    match /inventory/{document=**} {
+      allow read: if isStaff();
+      allow write: if hasRole('admin') || hasRole('manager');
+    }
+
   }
 }
