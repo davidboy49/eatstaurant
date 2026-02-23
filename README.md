@@ -27,6 +27,15 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...
 npm run dev
 ```
 
+## Where should env vars be set?
+
+Short answer: **both**, but in different places for different environments.
+
+- **Local development**: put them in `.env.local` (from `.env.example`).
+- **Vercel deployment**: add the same keys in **Vercel Project Settings → Environment Variables**.
+
+`NEXT_PUBLIC_*` variables are embedded at build time, so after editing them in Vercel you must **redeploy** for changes to take effect.
+
 ## Deploying to Vercel
 
 If you see this browser error:
