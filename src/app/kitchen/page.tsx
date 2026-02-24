@@ -77,36 +77,36 @@ export default function KDSPage() {
     const readyOrders = sortByAge(orders.filter((o) => o.status === "Ready"));
 
     const renderColumn = (title: string, list: KitchenOrder[], color: string) => (
-        <div className="flex flex-col gap-4" style={{ minWidth: "320px", width: "320px" }}>
-            <h3 className="font-bold border-b pb-2 flex justify-between" style={{ borderColor: "var(--color-overlay)" }}>
+        <div className="glass-panel flex max-h-full min-w-[320px] flex-col gap-4 rounded-xl border border-[var(--color-overlay)] p-4">
+            <h3 className="flex items-center justify-between border-b border-[var(--color-overlay)] pb-2 text-sm font-bold uppercase tracking-wide">
                 <span>{title}</span>
-                <span className="text-secondary px-2 rounded-full text-xs" style={{ background: "var(--color-overlay)", padding: "2px 8px" }}>
-                    {list.length}
-                </span>
+                <span className="rounded-full bg-[var(--color-icon-bg)] px-2 py-1 text-xs text-secondary">{list.length}</span>
             </h3>
             {list.length === 0 && (
-                <div className="glass-panel text-secondary text-sm" style={{ padding: "var(--spacing-4)" }}>
+                <div className="rounded-lg border border-dashed border-[var(--color-overlay)] p-4 text-sm text-secondary">
                     No orders in this state.
                 </div>
             )}
-            {list.map((order) => (
-                <OrderCard
-                    key={order.id}
-                    order={order}
-                    color={color}
-                    onAdvance={() => updateOrderStatus(order.id, order.status)}
-                    timeElapsed={getTimeElapsed(order.createdAt, now)}
-                />
-            ))}
+            <div className="space-y-3 overflow-y-auto pr-1">
+                {list.map((order) => (
+                    <OrderCard
+                        key={order.id}
+                        order={order}
+                        color={color}
+                        onAdvance={() => updateOrderStatus(order.id, order.status)}
+                        timeElapsed={getTimeElapsed(order.createdAt, now)}
+                    />
+                ))}
+            </div>
         </div>
     );
 
     return (
-        <div className="flex" style={{ height: "100vh", overflow: "hidden" }}>
+        <div className="flex h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.14),transparent_35%)]">
             <Sidebar />
 
-            <main style={{ flex: 1, padding: "var(--spacing-4) var(--spacing-6)", overflowY: "auto" }}>
-                <header className="flex justify-between items-center" style={{ marginBottom: "var(--spacing-6)" }}>
+            <main className="flex-1 overflow-hidden p-4 lg:p-6">
+                <header className="mb-6 flex items-center justify-between rounded-xl border border-[var(--color-overlay)] bg-[var(--color-icon-bg)]/60 px-4 py-3">
                     <div>
                         <h1 className="text-2xl font-bold flex items-center gap-2">
                             <ChefHat /> Kitchen Display System
@@ -118,7 +118,7 @@ export default function KDSPage() {
                 {loading ? (
                     <div className="text-secondary">Loading active kitchen tickets...</div>
                 ) : (
-                    <div className="flex gap-6" style={{ height: "calc(100% - 100px)", alignItems: "flex-start", overflowX: "auto" }}>
+                    <div className="flex h-[calc(100%-100px)] items-start gap-4 overflow-x-auto pb-2">
                         {renderColumn("Received", receivedOrders, "var(--color-primary)")}
                         {renderColumn("Preparing", preparingOrders, "var(--color-warning)")}
                         {renderColumn("Ready to Serve", readyOrders, "var(--color-success)")}
@@ -133,16 +133,16 @@ function OrderCard({ order, color, onAdvance, timeElapsed }: { order: KitchenOrd
     const isBlinking = timeElapsed > 15;
     return (
         <div
-            className="glass-panel"
+            className="rounded-xl border border-[var(--color-overlay)] bg-[var(--color-icon-bg)]/50"
             style={{
                 borderLeft: `4px solid ${color}`,
-                padding: "var(--spacing-4)",
+                padding: "var(--spacing-3)",
                 animation: isBlinking ? "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" : "none"
             }}
         >
             <div className="flex justify-between items-center mb-3">
                 <div>
-                    <h3 className="font-bold text-lg">Table: {order.tableNumber || "Walk-in"}</h3>
+                    <h3 className="text-base font-bold">Table: {order.tableNumber || "Walk-in"}</h3>
                     <p className="text-xs text-secondary font-mono">{order.orderNumber || order.id.slice(0, 8).toUpperCase()}</p>
                 </div>
                 <div className="flex items-center gap-1 text-sm text-secondary font-mono">
@@ -150,10 +150,10 @@ function OrderCard({ order, color, onAdvance, timeElapsed }: { order: KitchenOrd
                 </div>
             </div>
 
-            <div className="flex flex-col gap-2 mb-4">
+            <div className="mb-4 flex flex-col gap-2">
                 {order.items?.map((item, idx) => (
-                    <div key={`${item.name}-${idx}`} className="flex flex-col border-b pb-2" style={{ borderColor: "var(--color-icon-bg)" }}>
-                        <span className="font-medium">
+                    <div key={`${item.name}-${idx}`} className="flex flex-col rounded-md border border-[var(--color-overlay)] bg-black/10 p-2">
+                        <span className="text-sm font-medium">
                             <span className="text-primary-color mr-2">{item.quantity}x</span>
                             {item.name}
                         </span>
